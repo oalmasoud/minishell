@@ -16,6 +16,7 @@
 #include <readline/history.h>
 #include <stdbool.h>
 #include <sys/stat.h>
+#include <readline/history.h>
 
 #define PROMPT "\001\e[45m\002>>> \001\e[0m\e[33m\002 Minishell>$ \001\e[0m\002"
 #define HEREDOC_NAME "/tmp/.minishell_heredoc_"

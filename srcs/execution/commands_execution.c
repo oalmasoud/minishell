@@ -64,6 +64,16 @@ int dispatch_builtin(t_shell_data *shell, t_command *cmd)
         return handle_unset_builtin(shell, cmd->args);
     else if (ft_strncmp(cmd->command, "exit", 5) == 0)
         return handle_exit_builtin(shell, cmd->args);
+    else if (ft_strncmp(cmd->command, "history", 8) == 0)
+    {
+        HIST_ENTRY **the_list = history_list();
+        if (the_list)
+        {
+            for (int i = 0; the_list[i]; i++)
+                printf("%d  %s\n", i + history_base, the_list[i]->line);
+        }
+        return SUCCESS;
+    }
 
     return CMD_NOT_FOUND;
 }
