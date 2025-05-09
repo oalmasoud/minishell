@@ -4,11 +4,15 @@ bool process_input_command(t_shell_data *data_shell)
 {
     if (data_shell->input_line == NULL)
     {
-        execute_exit_command(data_shell, NULL);
+        handle_exit_builtin(data_shell, NULL);
     }
-    else if (ft_strlen(data_shell->input_line) == 0 || is_all_whitespace(data_shell->input_line))
+    else if (ft_strlen(data_shell->input_line) == 0)
     {
         return false;
+    }
+    else if (is_all_whitespace(data_shell->input_line))
+    {
+        return true;
     }
 
     add_history(data_shell->input_line);

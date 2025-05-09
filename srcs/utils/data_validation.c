@@ -10,75 +10,72 @@ static int env_counter(char **env)
 
     return (i);
 }
+void close_unused_pipes(t_command *cmd_list, t_command *exclude)
+{
+    while (cmd_list)
+    {
+        if (cmd_list != exclude && cmd_list->pipe_fd)
+        {
+            close(cmd_list->pipe_fd[0]);
+            close(cmd_list->pipe_fd[1]);
+        }
+        cmd_list = cmd_list->next;
+    }
+}
+bool configure_pipe_redirection(t_command *cmd_list, t_command *current)
+{
+    if (!current)
+        return false;
 
-// char *testing_strdup(const char *str)
-// {
-//     static int count = 0;
-//     count++;
-//     if (count == 3)
-//     { // Simulate failure on the third call
-//         return NULL;
-//     }
-//     return strdup(str);
-// }
+    if (current->prev && current->prev->pipe_output)
+        dup2(current->prev->pipe_fd[0], STDIN_FILENO);
+
+    if (current->pipe_output)
+        dup2(current->pipe_fd[1], STDOUT_FILENO);
+
+    close_unused_pipes(cmd_list, current);
+    return true;
+}
 
 bool validate_env(t_shell_data *data_shell, char **env)
 {
     int i;
 
-    data_shell->env = ft_calloc(env_counter(env) + 1, sizeof(*data_shell->env));
+    data_shell->env = ft_calloc(env_counter(env) + 1, sizeof *data_shell->env);
     if (!data_shell->env)
         return (false);
-    for (i = 0; env[i] != NULL; i++)
+    i = 0;
+    while (env[i])
     {
-        data_shell->env[i] = ft_strdup(env[i]); // testing_strdup(env[i]);
+        data_shell->env[i] = ft_strdup(env[i]);
         if (!data_shell->env[i])
-        {
-            while (--i >= 0)
-            {
-                free(data_shell->env[i]);
-            }
-            free(data_shell->env);
             return (false);
-        }
+        i++;
     }
-
-    data_shell->env[i] = NULL;
     return (true);
 }
 
-bool validate_working_directories(t_shell_data *data_shell, char **env)
+bool validate_working_directories(t_shell_data *data_shell)
 {
-    int oldPwdIndex;
+    char buff[PATH_MAX];
     char *wd;
-    const char *oldPwd;
 
-    wd = getcwd(NULL, 0);
-
-    if (!wd)
+    wd = getcwd(buff, PATH_MAX);
+    data_shell->current_directory = ft_strdup(wd);
+    if (!data_shell->current_directory)
         return (false);
-    data_shell->current_directory = wd;
-
-    oldPwdIndex = find_environment_var_index(data_shell->env, "OLDPWD");
-    if (oldPwdIndex != -1)
+    if (find_environment_var_index(data_shell->env, "OLDPWD") != -1)
     {
-        oldPwd = fetch_environment_var_value(data_shell->env, "OLDPWD");
-        data_shell->previous_directory = ft_strdup(oldPwd);
+        data_shell->previous_directory = ft_strdup(fetch_environment_var_value(data_shell->env,
+                                                                               "OLDPWD"));
         if (!data_shell->previous_directory)
-        {
-            free(wd);
             return (false);
-        }
     }
     else
     {
         data_shell->previous_directory = ft_strdup(wd);
         if (!data_shell->previous_directory)
-        {
-            free(wd);
             return (false);
-        }
     }
-    free(wd);
     return (true);
 }

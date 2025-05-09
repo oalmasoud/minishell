@@ -64,8 +64,6 @@ static char *extract_env_key(char *str)
     if (!key)
         return NULL;
 
-    printf("🔎 Extracted env key: %s\n", key); // 👈 Add it right here
-
     return key;
 }
 
@@ -80,7 +78,6 @@ char *get_expanded_value(t_token *token, char *str, t_shell_data *shell)
     if (key[0] == '?' && key[1] == '\0')
     {
         value = ft_itoa(g_code);
-        printf("Expanding special variable '$?': g_code = %d, expanded = %s\n", g_code, value);
     }
     else if (env_key_exists(shell, key))
     {

@@ -6,7 +6,6 @@ bool has_quotes(const char *str)
     {
         if (*str == '\'' || *str == '"')
         {
-            printf("🧪 Quote detected in: %s\n", str);
             return true;
         }
         str++;
@@ -79,9 +78,8 @@ int process_token_quotes(t_shell_data *data_shell)
     {
         if (has_quotes(current->token_value) && (!current->prev || current->prev->token_type != HEREDOC))
         {
-            printf("🔧 Cleaning quotes from token: %s\n", current->token_value);
+
             strip_quotes_from_token(&current);
-            printf("✅ Cleaned token: %s\n", current->token_value);
         }
         current = current->next;
     }

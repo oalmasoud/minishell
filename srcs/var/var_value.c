@@ -113,11 +113,7 @@ int expand_env_variables(t_shell_data *data_shell, t_token **tokens)
                 {
                     char *expanded_value = get_expanded_value(node, node->token_value + i, data_shell);
 
-                    // 🐛 Debug print:
-                    printf("Expanding: %s → %s\n", node->token_value, expanded_value ? expanded_value : "(null)");
-
                     substitute_variable_value(&node, expanded_value, i);
-                    printf("Token after expansion: %s\n", node->token_value);
                 }
                 else
                     i++;

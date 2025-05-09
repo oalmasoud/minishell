@@ -11,9 +11,6 @@ static bool checkForOperatorErrors(t_token *node)
     if (!prev)
         return false;
 
-    printf("Checking consecutive operator errors between tokens '%s' and '%s'\n",
-           prev->token_value, node->token_value);
-
     // Handle invalid consecutive operators (PIPE/TRUNC/APPEND/etc.)
     if ((node->token_type >= PIPE && node->token_type <= APPEND) &&
         (prev->token_type >= PIPE && prev->token_type <= APPEND))
@@ -33,13 +30,13 @@ static int processTokenList(t_token **list)
 
     while (current != NULL)
     {
-        printf("Processing token: %s\n", current->token_value);
+
         i = 0;
         while (current->token_value[i] != '\0')
         {
             if (current->token_value[i] == '$' && (!current->prev || current->prev->token_type != HEREDOC))
             {
-                printf("Variable detected in token: %s\n", current->token_value);
+
                 current->token_type = VAR;
                 break;
             }

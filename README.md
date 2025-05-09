@@ -17,7 +17,7 @@ This project was a deep dive into:
 - File descriptor manipulation (`dup`, `pipe`)
 - Terminal I/O
 - Parsing and quoting logic
-- Signal handling (e.g., `ctrl-C`, `ctrl-D`)
+- Signal handling (e.g., `Ctrl-C`, `Ctrl-D`)
 - Error handling and memory management in a long-running program
 
 ---
@@ -32,9 +32,14 @@ This project was a deep dive into:
 - Quote handling:
   - `'single quotes'`: literal interpretation
   - `"double quotes"`: allows `$` expansion
-- **Environment variable** expansion (`$VAR`, `$?`)
+- **Environment variable expansion**:
+  - `$VAR`
+  - `$?` (last command’s exit status)
 - **Redirections**:
-  - `<`, `>`, `>>`, `<<` (heredoc with delimiter)
+  - `<`: input redirection
+  - `>`: output redirection (overwrite)
+  - `>>`: output redirection (append)
+  - `<<`: heredoc with delimiter
 - **Pipes** (`|`) for command chaining
 - **Built-in commands**:
   - `echo [-n]`
@@ -45,23 +50,85 @@ This project was a deep dive into:
   - `env`
   - `exit`
 - **Signal handling**:
-  - `ctrl-C`: resets prompt
-  - `ctrl-D`: exits shell
-  - `ctrl-\`: ignored
+  - `Ctrl-C`: resets prompt
+  - `Ctrl-D`: exits shell
+  - `Ctrl-\`: ignored
 
 ---
 
 ## ⚙️ How It Works
 
-### Startup
+### 🟢 Startup
 
 - Displays a shell prompt
 - Waits for user input
 - Parses input into tokens and builds execution structures
 
-### Execution
+### ⚙️ Execution
 
 - Runs built-ins directly
 - Forks and executes external commands via `execve`
 - Sets up pipes and redirections
 - Expands variables using the current environment
+
+---
+
+## 🛠 Installation & Execution
+
+### 📦 Dependencies
+
+Before compiling `minishell`, make sure you have the required libraries installed:
+
+```bash
+sudo apt-get install libreadline-dev build-essential
+```
+
+## 🧱 Compilation
+
+```bash
+make
+
+```
+
+## ▶️ Running the Shell
+
+```bash
+./minishell
+
+```
+
+## ✅ What You Can Test
+
+### 🔹 Shell Basics
+
+- Shows a prompt and waits for input
+- Accepts keyboard input using `readline`
+
+### 🔹 Built-in Commands
+
+```bash
+echo [-n]         # print arguments
+cd [path]         # change directory
+pwd               # print working directory
+export VAR=VALUE  # set environment variable
+unset VAR         # remove environment variable
+env               # list all environment variables
+exit [n]          # exit the shell
+
+```
+
+### 🔹 Redirection
+
+< # redirect input
+
+>     # redirect output (overwrite)
+>
+> > # redirect output (append)
+> >
+> > << # heredoc until given delimiter
+
+### 🔹 Environment Variable Expansion
+
+### 🔹 Pipes
+
+### 🔹 Quotes

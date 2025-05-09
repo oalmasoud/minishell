@@ -13,7 +13,7 @@ void free_string_array(char **arr)
     free_safe((void **)&arr);
 }
 
-static void clear_token_list(t_token **lst, void (*del)(void *))
+void clear_token_list(t_token **lst, void (*del)(void *))
 {
     t_token *tmp;
 

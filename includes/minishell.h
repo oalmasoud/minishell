@@ -15,12 +15,24 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <stdbool.h>
+#include <sys/stat.h>
 
 #define PROMPT "\001\e[45m\002>>> \001\e[0m\e[33m\002 Minishell>$ \001\e[0m\002"
 #define HEREDOC_NAME "/tmp/.minishell_heredoc_"
 
 #define SUCCESS 0
 #define FAILURE 1
+
+// NEW
+
+#define CMD_NOT_FOUND 127
+#define CMD_NOT_EXECUTABLE 126
+
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif
+
+// NEW
 
 extern int g_code;
 
@@ -96,19 +108,17 @@ enum e_token_types
 
 bool guide_message(bool value);
 bool validate_env(t_shell_data *data_shell, char **env);
-void simple_error_message(char *error_message);
-bool validate_working_directories(t_shell_data *data_shell, char **env);
+bool validate_working_directories(t_shell_data *data_shell);
 int find_environment_var_index(char **env, char *var);
 char *fetch_environment_var_value(char **env, char *var);
 void configureInteractiveSignals();
 void ignoreCommandSignals();
 bool process_input_command(t_shell_data *data_shell);
-int execute_exit_command(t_shell_data *data_shell, char **args);
 bool is_all_whitespace(char *input);
 int tokenize_input(t_shell_data *data_shell, char *input);
 int ft_isspace(int c);
-int is_separator(char current_char, char next_char);
-t_token *create_new_token(char *content, int type, int status);
+int is_separator(char *str, int i);
+t_token *create_new_token(char *str, char *str_backup, int type, int status);
 void add_token_to_list(t_token **list, t_token *new_token);
 int validateAndProcessVar(t_token **tokens);
 void error_msg(const char *error, const char *context, bool newline);
@@ -156,4 +166,37 @@ void handle_output_append(t_command **command_list, t_token **token_stream);
 void handle_pipe_token(t_command **command_list, t_token **token_stream);
 void free_safe_2(void *ptr);
 
+// NEW
+
+int dispatch_execution_flow(t_shell_data *data_shell);
+void clear_token_list(t_token **lst, void (*del)(void *));
+void free_command_list(t_command **head, void (*del)(void *));
+bool restore_std_fds(t_io_redirect *redirect);
+bool apply_io_redirection(t_io_redirect *redirects);
+int dispatch_builtin(t_shell_data *shell, t_command *cmd);
+int handle_cd_builtin(t_shell_data *shell, char **arguments);
+int var_count(char **env);
+char **resize_env_array(t_shell_data *shell, int new_size);
+int handle_echo_builtin(t_shell_data *shell, char **arguments);
+int handle_env_builtin(t_shell_data *shell, char **arguments);
+bool update_env_variable(t_shell_data *shell, char *key, char *value);
+int handle_export_builtin(t_shell_data *shell, char **args);
+int handle_pwd_builtin(t_shell_data *shell, char **arguments);
+bool is_valid_env_var_key(char *var);
+int handle_unset_builtin(t_shell_data *shell, char **arguments);
+void cleanup_shell_state(t_shell_data *shell, bool full_cleanup);
+void terminate_shell(t_shell_data *shell_context, int exit_code);
+int handle_exit_builtin(t_shell_data *shell, char **arguments);
+int launch_command_processes(t_shell_data *shell);
+bool validate_redirection_fds(t_io_redirect *redirects);
+bool configure_pipe_redirection(t_command *cmd_list, t_command *current);
+char *resolve_command_path(t_shell_data *shell, char *command);
+bool is_directory_command(char *cmd_name);
+int run_local_executable(t_shell_data *shell, t_command *cmd);
+int exec_child_command(t_shell_data *shell, t_command *cmd);
+void close_fds(t_command *cmds, bool close_backups);
+void close_unused_pipes(t_command *cmd_list, t_command *exclude);
+void simple_error_message(char *error_message);
+// Zaid note that I have removed int execute_exit_command(t_shell_data *data_shell, char **args);
+//  NEW
 #endif
