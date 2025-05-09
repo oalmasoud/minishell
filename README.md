@@ -96,39 +96,3 @@ make
 ./minishell
 
 ```
-
-## ✅ What You Can Test
-
-### 🔹 Shell Basics
-
-- Shows a prompt and waits for input
-- Accepts keyboard input using `readline`
-
-### 🔹 Built-in Commands
-
-```bash
-echo [-n]         # print arguments
-cd [path]         # change directory
-pwd               # print working directory
-export VAR=VALUE  # set environment variable
-unset VAR         # remove environment variable
-env               # list all environment variables
-exit [n]          # exit the shell
-
-```
-
-### 🔹 Redirection
-
-< # redirect input
-
->     # redirect output (overwrite)
->
-> > # redirect output (append)
-> >
-> > << # heredoc until given delimiter
-
-### 🔹 Environment Variable Expansion
-
-### 🔹 Pipes
-
-### 🔹 Quotes
